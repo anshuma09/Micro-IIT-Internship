@@ -1,0 +1,45 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Exchange rates with respect to USD (can be updated)
+        HashMap<String, Double> exchangeRates = new HashMap<>();
+        exchangeRates.put("USD", 1.0);        // US Dollar
+        exchangeRates.put("EUR", 0.92);       // Euro
+        exchangeRates.put("GBP", 0.79);       // British Pound
+        exchangeRates.put("CHF", 0.91);       // Swiss Franc
+        exchangeRates.put("CNY", 7.25);       // Chinese Yuan
+        exchangeRates.put("JPY", 151.23);     // Japanese Yen
+
+        System.out.println("========== Currency Converter ==========");
+
+        while (true) {
+            System.out.println("\nAvailable Currencies: USD, EUR, GBP, CHF, CNY, JPY");
+
+            System.out.print("Enter source currency code (or type 'exit' to quit): ");
+            String from = scanner.next().toUpperCase();
+            if (from.equals("EXIT")) break;
+
+            System.out.print("Enter target currency code: ");
+            String to = scanner.next().toUpperCase();
+
+            System.out.print("Enter amount to convert: ");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
+
+            if (!exchangeRates.containsKey(from) || !exchangeRates.containsKey(to)) {
+                System.out.println("❌ Invalid currency code. Please try again.");
+            } else {
+                double inUSD = amount / exchangeRates.get(from);
+                double converted = inUSD * exchangeRates.get(to);
+                System.out.printf("✅ %.2f %s = %.2f %s\n", amount, from, converted, to);
+            }
+        }
+
+        System.out.println("Thank you for using the currency converter!");
+        scanner.close();
+    }
+}

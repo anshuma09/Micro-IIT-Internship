@@ -1,0 +1,154 @@
+import java.util.*;
+
+class Task {
+    String description;
+    boolean isCompleted;
+
+    Task(String description) {
+        this.description = description;
+        this.isCompleted = false;
+    }
+
+    public void markDone() {
+        this.isCompleted = true;
+    }
+
+    @Override
+    public String toString() {
+        return (isCompleted ? "[✓] " : "[ ] ") + description;
+    }
+}
+
+class User {
+    String username;
+    String password;
+    ArrayList<Task> tasks;
+
+    User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.tasks = new ArrayList<>();
+    }
+}
+
+public class Main {
+    static HashMap<String, User> users = new HashMap<>();
+    static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        // Sample user
+        users.put("admin", new User("admin", "1234"));
+
+        System.out.println("========== Welcome to To-Do List App ==========");
+        User currentUser = loginMenu();
+
+        if (currentUser != null) {
+            toDoMenu(currentUser);
+        }
+
+        System.out.println("👋 Goodbye!");
+        scanner.close();
+    }
+
+    public static User loginMenu() {
+        while (true) {
+            System.out.println("\n1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+            int option = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (option) {
+                case 1:
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+
+                    if (users.containsKey(username) && users.get(username).password.equals(password)) {
+                        System.out.println("✅ Login successful!");
+                        return users.get(username);
+                    } else {
+                        System.out.println("❌ Invalid username or password.");
+                    }
+                    break;
+                case 2:
+                    System.out.print("Choose a username: ");
+                    String newUser = scanner.nextLine();
+                    if (users.containsKey(newUser)) {
+                        System.out.println("⚠️ Username already exists.");
+                        break;
+                    }
+                    System.out.print("Choose a password: ");
+                    String newPass = scanner.nextLine();
+                    users.put(newUser, new User(newUser, newPass));
+                    System.out.println("✅ Registration successful! You can now log in.");
+                    break;
+                case 3:
+                    return null;
+                default:
+                    System.out.println("⚠️ Invalid choice.");
+            }
+        }
+    }
+
+    public static void toDoMenu(User user) {
+        int choice;
+        do {
+            System.out.println("\n========== TO-DO LIST: " + user.username + " ==========");
+            System.out.println("1. Add Task");
+            System.out.println("2. View Tasks");
+            System.out.println("3. Mark Task as Completed");
+            System.out.println("4. Remove Task");
+            System.out.println("5. Logout");
+            System.out.print("Enter your choice (1-5): ");
+            choice = scanner.nextInt();
+            scanner.nextLine();  // consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter task description: ");
+                    String desc = scanner.nextLine();
+                    user.tasks.add(new Task(desc));
+                    System.out.println("✅ Task added.");
+                    break;
+                case 2:
+                    if (user.tasks.isEmpty()) {
+                        System.out.println("📭 No tasks yet.");
+                    } else {
+                        System.out.println("📋 Your Tasks:");
+                        for (int i = 0; i < user.tasks.size(); i++) {
+                            System.out.println((i + 1) + ". " + user.tasks.get(i));
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter task number to mark as completed: ");
+                    int doneIndex = scanner.nextInt() - 1;
+                    if (doneIndex >= 0 && doneIndex < user.tasks.size()) {
+                        user.tasks.get(doneIndex).markDone();
+                        System.out.println("✅ Task marked as completed.");
+                    } else {
+                        System.out.println("❌ Invalid task number.");
+                    }
+                    break;
+                case 4:
+                    System.out.print("Enter task number to remove: ");
+                    int removeIndex = scanner.nextInt() - 1;
+                    if (removeIndex >= 0 && removeIndex < user.tasks.size()) {
+                        user.tasks.remove(removeIndex);
+                        System.out.println("🗑️ Task removed.");
+                    } else {
+                        System.out.println("❌ Invalid task number.");
+                    }
+                    break;
+                case 5:
+                    System.out.println("🔒 Logged out.");
+                    break;
+                default:
+                    System.out.println("⚠️ Invalid choice. Try again.");
+            }
+        } while (choice != 5);
+    }
+}
